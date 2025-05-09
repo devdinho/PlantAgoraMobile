@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  Dimensions
-} from 'react-native';
+import Logo from '@/components/ui/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import Logo from '@/components/ui/Logo';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 // Obtendo a largura da tela para responsividade
 const { width } = Dimensions.get('window');
 
@@ -68,7 +68,11 @@ export default function HomePage() {
         <View style={styles.headerLeft}>
           <Logo style={styles.logo} />
         </View>
-        <TouchableOpacity style={styles.settingsButton}>
+        <TouchableOpacity
+        style={styles.settingsButton}
+        onPress={() => router.push('/config')}
+        >
+          {/* Icone de configurações */}
           <Ionicons name="settings-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>
