@@ -1,11 +1,31 @@
-// app/index.js
+import { useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import Logo from '@/components/ui/Logo';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  useEffect(() => {
+    const checkFirstAccess = async () => {
+      try{
+        const valueFirstAccess = await AsyncStorage.getItem('firstAccess');
+
+        if (valueFirstAccess === null) {
+          await AsyncStorage.setItem('firstAccess', 'true');
+        } else {
+          valueFirstAccess === 'true' ? router.push('/auth/login'):''
+        }
+      } catch (error) {
+        console.error('Error accessing AsyncStorage:', error);
+      }
+    }
+
+    checkFirstAccess();
+
+  },[]);
 
   return (
     <SafeAreaView style={styles.container}>
