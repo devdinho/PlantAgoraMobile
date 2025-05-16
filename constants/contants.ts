@@ -27,12 +27,10 @@ export class DocumentType {
      */
     static readonly CPF = 1;
     static readonly CNPJ = 2;
-    static readonly OTHER = 0;
 
     static readonly DOCUMENT_TYPE_CHOICES = [
         { value: DocumentType.CPF, label: "CPF" },
         { value: DocumentType.CNPJ, label: "CNPJ" },
-        { value: DocumentType.OTHER, label: "Outro" },
     ];
 }
 
@@ -93,5 +91,26 @@ export class LevelOfEducation {
         { value: LevelOfEducation.HIGH_SCHOOL, label: "Ensino Médio" },
         { value: LevelOfEducation.UNDERGRADUATE, label: "Graduação" },
         { value: LevelOfEducation.POSTGRADUATE, label: "Pós-Graduação" },
+    ];
+}
+
+export class Gender{
+    /**
+     * Object representando os gêneros.
+     * 
+     * Atributos:
+     * - MALE (int): Masculino.
+     * - FEMALE (int): Feminino.
+     * - OTHER (int): Outro.
+    */
+    
+    static readonly MALE = 1;
+    static readonly FEMALE = 2;
+    static readonly OTHER = 3;
+    
+    static readonly GENDER_CHOICES = [
+        { value: Gender.MALE, label: "Masculino"},
+        { value: Gender.FEMALE, label: "Feminino"},
+        { value: Gender.OTHER, label: "Outro"},
     ];
 }
