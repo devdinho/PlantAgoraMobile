@@ -1,6 +1,5 @@
-import { StackNavigationProp } from '@react-navigation/stack';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Platform,
     SafeAreaView,
@@ -9,18 +8,46 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
+    Image
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type ConfiguracoesScreenProps = {
-  navigation: StackNavigationProp<any>;
-};
+export default function ConfiguracoesScreen(){
+  const [userFirstName, setUserFirstName] = useState(null);
+  const [userLastName, setUserLastName] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
+  const [userPicture, setUserPicture] = useState(null);
+  const [acronym, setAcronym] = useState(null);
 
-const ConfiguracoesScreen = ({ navigation }: ConfiguracoesScreenProps) => {
-  const handleVoltar = () => {
-    navigation.goBack();
-  };
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const userProfileInfo = await AsyncStorage.getItem('userProfile');
+        const userProfilePicture = await AsyncStorage.getItem('userProfilePicture');
+
+        if (userProfileInfo) {
+          const userInfos = JSON.parse(userProfileInfo);
+          setUserFirstName(userInfos.first_name);
+          setUserLastName(userInfos.last_name);
+          setUserEmail(userInfos.email);
+          setAcronym(userInfos.first_name.charAt(0).toUpperCase() + userInfos.last_name.charAt(0).toUpperCase());
+
+          console.log('User Profile:', userInfos);
+        }
+        if (userProfilePicture) {
+          setUserPicture(userProfilePicture);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+    
+  }, []);
 
   const renderMenuItem = (iconName, title, subtitle = null, hasChevron = true, onPress = () => {}) => {
     return (
@@ -62,11 +89,18 @@ const ConfiguracoesScreen = ({ navigation }: ConfiguracoesScreenProps) => {
             
             <View style={styles.userInfo}>
               <View style={styles.avatarContainer}>
-                <Text style={styles.avatarText}>JA</Text>
+                {userPicture ? (
+                  <Image
+                    source={{ uri: userPicture }}
+                    style={{ width: 50, height: 50, borderRadius: 25 }}
+                  />
+                ) : (
+                  <Text style={styles.avatarText}>{acronym}</Text>
+                )}
               </View>
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>Joaquim Arruda</Text>
-                <Text style={styles.userEmail}>email@exemplo.com</Text>
+                <Text style={styles.userName}>{userFirstName} {userLastName}</Text>
+                <Text style={styles.userEmail}>{userEmail}</Text>
               </View>
             </View>
 
@@ -111,11 +145,6 @@ const ConfiguracoesScreen = ({ navigation }: ConfiguracoesScreenProps) => {
             'Sobre o aplicativo'
           )}
         </View>
-
-        <TouchableOpacity style={styles.logoutButton}>
-          <Icon name="logout" size={20} color="#fff" style={styles.logoutIcon} />
-          <Text style={styles.logoutText}>Sair da Conta</Text>
-        </TouchableOpacity>
 
         <View style={styles.footer} />
       </ScrollView>
@@ -253,28 +282,7 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 2,
   },
-  logoutButton: {
-    backgroundColor: '#F44336',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 8,
-    paddingVertical: 14,
-  },
-  logoutIcon: {
-    marginRight: 8,
-  },
-  logoutText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   footer: {
     height: 32,
   },
 });
-
-export default ConfiguracoesScreen;

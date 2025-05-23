@@ -1,24 +1,62 @@
-import Logo from '@/components/ui/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Image
 } from 'react-native';
-// Obtendo a largura da tela para responsividade
-const { width } = Dimensions.get('window');
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import Logo from '@/components/ui/Logo';
 
 export default function HomePage() {
   const [selectedCard, setSelectedCard] = useState('dados');
-  
+  const [userFirstName, setUserFirstName] = useState(null);
+  const [userPicture, setUserPicture] = useState(null);
+  const [acronym, setAcronym] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const userProfileInfo = await AsyncStorage.getItem('userProfile');
+        if (userProfileInfo) {
+          const userInfos = JSON.parse(userProfileInfo);
+          setUserFirstName(userInfos.first_name);
+          setAcronym(userInfos.first_name.charAt(0).toUpperCase() + userInfos.last_name.charAt(0).toUpperCase());
+        }
+        const userProfilePicture = await AsyncStorage.getItem('userProfilePicture');
+        if (userProfilePicture) {
+          setUserPicture(userProfilePicture);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+    
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userProfile');
+      await AsyncStorage.removeItem('userSessionKeys');
+      
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  }
   // Dados dos cartões
   const cards = [
     { 
@@ -72,7 +110,6 @@ export default function HomePage() {
         style={styles.settingsButton}
         onPress={() => router.push('/config')}
         >
-          {/* Icone de configurações */}
           <Ionicons name="settings-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>
@@ -84,14 +121,21 @@ export default function HomePage() {
       >
         <View style={styles.welcomeContent}>
           <View style={styles.welcomeTextContainer}>
-            <Text style={styles.welcomeTitle}>Olá, Joaquim!</Text>
+            <Text style={styles.welcomeTitle}>Olá, {userFirstName}!</Text>
             <Text style={styles.welcomeSubtitle}>
               Por favor, selecione um card abaixo para preencher
               ou atualizar suas informações
             </Text>
           </View>
           <View style={styles.profileImageContainer}>
-            <Logo style={styles.logo} />
+            {userPicture ? (
+              <Image
+                source={{ uri: userPicture }}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
+              />
+            ) : (
+              <Text style={styles.avatarText}>{acronym}</Text>
+            )}
             <View style={styles.statusIndicator} />
           </View>
         </View>
@@ -148,10 +192,15 @@ export default function HomePage() {
             )}
           </TouchableOpacity>
         ))}
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Icon name="logout" size={20} color="#fff" style={styles.logoutIcon} />
+          <Text style={styles.logoutText}>Sair da Conta</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
+      {/* <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navButton}>
           <Ionicons name="home" size={24} color="#0c8b56" />
           <Text style={[styles.navText, styles.activeNavText]}>Início</Text>
@@ -171,7 +220,7 @@ export default function HomePage() {
           <Ionicons name="person-outline" size={24} color="#aaa" />
           <Text style={styles.navText}>Perfil</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 }
@@ -342,5 +391,24 @@ const styles = StyleSheet.create({
   activeNavText: {
     color: '#0c8b56',
     fontWeight: '500',
+  },
+    logoutButton: {
+    backgroundColor: '#F44336',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    paddingVertical: 14,
+  },
+  logoutIcon: {
+    marginRight: 8,
+  },
+  logoutText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

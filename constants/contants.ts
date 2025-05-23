@@ -17,23 +17,6 @@ export class ProfileType {
     ];
 }
 
-export class DocumentType {
-    /**
-     * Representa diferentes tipos de Documentos.
-     *
-     * CPF: Cadastro de Pessoas Físicas.
-     * CNPJ: Cadastro Nacional da Pessoa Jurídica.
-     * OTHER: Qualquer outro tipo de documento não listado acima.
-     */
-    static readonly CPF = 1;
-    static readonly CNPJ = 2;
-
-    static readonly DOCUMENT_TYPE_CHOICES = [
-        { value: DocumentType.CPF, label: "CPF" },
-        { value: DocumentType.CNPJ, label: "CNPJ" },
-    ];
-}
-
 export class Status {
     /**
      * Representa diferentes status de objetos.

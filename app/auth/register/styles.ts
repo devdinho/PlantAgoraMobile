@@ -1,5 +1,5 @@
 // app/screens/RegisterScreen.styles.ts
-import { StyleSheet, Platform, ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import { StyleSheet, Platform, ViewStyle, TextStyle } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
 interface Styles {
@@ -8,7 +8,7 @@ interface Styles {
   scrollContainer: ViewStyle;
   header: ViewStyle;
   backButton: ViewStyle;
-  logo: ImageStyle;
+  logo: ViewStyle;
   progressContainer: ViewStyle;
   progressBar: ViewStyle;
   progressFilled: ViewStyle;
@@ -60,7 +60,8 @@ const styles = StyleSheet.create<Styles>({
   },
   logo: {
     height: 30,
-    resizeMode: 'contain',
+    width: 30,
+    borderRadius: 240,
   },
   progressContainer: {
     marginBottom: 30,
@@ -70,6 +71,12 @@ const styles = StyleSheet.create<Styles>({
     backgroundColor: '#f0f0f0',
     borderRadius: 3,
     marginBottom: 8,
+  },
+  progressFilled: {
+    width: '0%',
+    height: '100%',
+    backgroundColor: Colors.light.primary,
+    borderRadius: 3,
   },
   progressFilled1: {
     width: '50%',

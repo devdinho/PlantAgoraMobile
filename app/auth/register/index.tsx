@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { 
-  Alert,
+import {
   View, 
   Text, 
   TextInput, 
@@ -15,10 +14,12 @@ import Logo from '@/components/ui/Logo';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { TextInputMask } from 'react-native-masked-text';
+import Toast from 'react-native-toast-message';
 
 import styles from './styles';
-import { DocumentType, LevelOfEducation, Gender, ProfileType } from '@/constants/contants';
+import { LevelOfEducation, Gender } from '@/constants/contants';
 import { callApi } from '@/services/api';
+import ApiError from '../../../constants/errors'
 
 const buscarCep = async (cep:string) => {
   try {
@@ -31,18 +32,22 @@ const buscarCep = async (cep:string) => {
   }
 };
 
-const registerUser = async (userData:any) => {
-  console.log('userData', userData);
+const registerUser = async (userData: any) => {
   try {
     const result = await callApi('register', {
       body: userData,
     });
     return result;
   } catch (error) {
-    console.error('Erro ao registrar o usuário:', error);
+    const errorMsg = (error as any)?.message;
+
+    let errorMessage = ApiError.ERROR_CHOICES.find(item => item.value === errorMsg).label;
+
+    throw errorMessage;
   }
 }
 export default function RegisterFinish() {
+  const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -59,14 +64,11 @@ export default function RegisterFinish() {
   const [tel, setTel] = useState('');
   
   const [document, setDocument] = useState('');
-  const [documentType, setDocumentType] = useState(DocumentType.CPF);
   
   const [birthdate, setBirthdate] = useState('');
   
   const [gender, setGender] = useState('');
   const [showGenderOptions, setShowGenderOptions] = useState(false);
-  
-  const [caf, setCaf] = useState('');
 
   const [scholarity, setScholarity] = useState('');
   const [showScholarityOptions, setShowScholarityOptions] = useState(false);
@@ -82,11 +84,13 @@ export default function RegisterFinish() {
   };
   
   const handleFinishRegistration = () => {
+    setLoading(true);
+
     let allInseted = true;
 
     switch (activeTab) {
       case 0:
-        allInseted = [fullname, documentType, document, birthdate, gender, scholarity, tel, cep]
+        allInseted = [fullname, document, birthdate, gender, scholarity, tel, cep]
           .every((item) => item !== null && item !== '');
         break;
 
@@ -100,7 +104,11 @@ export default function RegisterFinish() {
     }
 
     if (!allInseted) {
-      Alert.alert('Preencha todos os campos obrigatórios!');
+      Toast.show({
+        type: 'error',
+        text1: 'Atenção',
+        text2: 'Preencha todos os campos obrigatórios!',
+      });
       return;
     }
 
@@ -109,7 +117,7 @@ export default function RegisterFinish() {
     }
 
     if (activeTab === 0) {
-      var result = buscarCep(cep);
+      var result = buscarCep(cep.replace(/\D/g, ''));
 
       result.then((res) => {
         if (res) {
@@ -118,40 +126,52 @@ export default function RegisterFinish() {
           setCity(res.localidade);
           setState(res.uf);
         } else {
-          Alert.alert('Erro ao buscar o CEP');
+          Toast.show({
+            type: 'error',
+            text1: 'Atenção',
+            text2: 'Erro ao buscar o CEP',
+          });
         }
       });
     }
 
     if (activeTab === tabs.length - 1) {
-      var endereco = `${address}, ${number} ${complement ? `, ${complement}` : ''}`;
+      var fulladdress = `${address}, ${number} ${complement ? `, ${complement}` : ''}`;
 
       const userData = {
-        fullname,
-        caf,
-        endereco: endereco,
-        scholarity,
-        document,
-        document_type: documentType,
-        gender,
-        birthdate,
-        tel,
+        username: document.replace(/\D/g, ''),
+        password: document.replace(/\D/g, ''),
+        fullname: fullname,
+        fulladdress: fulladdress,
+        scholarity: scholarity,
+        document: document.replace(/\D/g, ''),
+        gender:gender,
+        birthdate: birthdate,
+        cell: tel.replace(/\D/g, ''),
+        zipcode: cep.replace(/\D/g, ''),
+        city: `${city}/${state}`,
       }
       
-      const result = registerUser(userData);
-      result.then((res) => {
-        if (res) {
-          Alert.alert('Cadastro realizado com sucesso!');
-          router.push('/auth/login');
-        } else {
-          Alert.alert('Erro ao realizar o cadastro');
-        }
-      }
-      );32
-
-
+      registerUser(userData)
+        .then((res) => {
+          if (res) {
+        Toast.show({
+          type: 'success',
+          text1: 'Atenção',
+          text2: 'Cadastro realizado com sucesso!',
+        });
+        router.push('/auth/login');
+          }
+        })
+        .catch((err) => {
+          Toast.show({
+        type: 'error',
+        text1: 'Atenção',
+        text2: err || 'Erro ao realizar cadastro.',
+          });
+        });
     }
-
+    setLoading(false);
   };
 
   const tabProgress = [
@@ -183,58 +203,15 @@ export default function RegisterFinish() {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-          {DocumentType.DOCUMENT_TYPE_CHOICES.map((typeOption) => (
-            <TouchableOpacity
-              key={typeOption.value}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginRight: 16,
-                marginBottom: 8,
-                padding: 8,
-              }}
-              onPress={() => setDocumentType(typeOption.value)}
-              activeOpacity={0.7}
-            >
-              <View
-                style={{
-                  height: 18,
-                  width: 18,
-                  borderRadius: 9,
-                  borderWidth: 2,
-                  borderColor: Colors.light.primary,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: 6,
-                }}
-              >
-                {documentType === typeOption.value && (
-                  <View
-                    style={{
-                      height: 10,
-                      width: 10,
-                      borderRadius: 5,
-                      backgroundColor: Colors.light.primary,
-                    }}
-                  />
-                )}
-              </View>
-              <Text style={{ color: '#444', fontSize: 14 }}>{typeOption.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>
-            {documentType === DocumentType.CNPJ ? 'CNPJ:' : 'CPF:'}
+            CPF
           </Text>
           <View style={styles.inputWrapper}>
             <Ionicons name="card-outline" size={20} color="#888" style={styles.inputIcon} />
             <TextInputMask
-            type={documentType === DocumentType.CNPJ ? 'cnpj' : 'cpf'}
-            placeholder={documentType === DocumentType.CNPJ ? '00.000.000/0000-00' : '000.000.000-00'}
+            type='cpf'
+            placeholder='000.000.000-00'
             style={styles.input}
             placeholderTextColor="#aaa"
             value={document}
@@ -509,6 +486,7 @@ export default function RegisterFinish() {
             style={styles.button}
             activeOpacity={0.8}
             onPress={handleFinishRegistration}
+            disabled={loading}
           >
             <Text style={styles.buttonText}>{activeTab + 1  === tabs.length ? 'Finalizar':'Avançar'}</Text>
             <Ionicons name={activeTab + 1  === tabs.length ?'checkmark-circle':'arrow-forward'} size={20} color="#fff" style={styles.buttonIcon} />

@@ -16,7 +16,9 @@ export default function HomeScreen() {
         if (valueFirstAccess === null) {
           await AsyncStorage.setItem('firstAccess', 'true');
         } else {
-          valueFirstAccess === 'true' ? router.push('/auth/login'):''
+          if (valueFirstAccess === 'true') {
+            router.push('/auth/login');
+          }
         }
       } catch (error) {
         console.error('Error accessing AsyncStorage:', error);
@@ -25,7 +27,7 @@ export default function HomeScreen() {
 
     checkFirstAccess();
 
-  },[]);
+  },[router]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,28 +1,136 @@
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import { useState, useEffect } from 'react';
+import {View,Text,TextInput,TouchableOpacity, Pressable,KeyboardAvoidingView,Platform,ScrollView,} from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+
 import { useRouter } from 'expo-router';
-import Logo from '@/components/ui/Logo';
 import { Ionicons } from '@expo/vector-icons';
+
+import { callApi, API_BASE_URL } from '@/services/api';
+import ApiError from '../../../constants/errors'
+import LoginInterface from '../../../interfaces/login';
+
+import Logo from '@/components/ui/Logo';
 import styles from './styles';
+
+
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log('Login com:', email, password);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const router = useRouter();
+  
+  useEffect(() => {
+    const checkUserSession = async () => {
+      try {
+        const userSessionKeys = await AsyncStorage.getItem('userSessionKeys');
+
+        if (userSessionKeys) {
+          router.push('/homepage');
+        }
+      } catch (error) {
+        setError(error);
+      }
+    }
+    checkUserSession();
+
+  }, [router]);
+
+  useEffect(() => {
+    if (error) {      
+      Toast.show({
+        type: 'error',
+        text1: 'Atenção',
+        text2: error,
+      });
+    }
+    if (success) {
+      Toast.show({
+        type: 'success',
+        text1: 'Sucesso',
+        text2: 'Login realizado com sucesso!',
+      });
+    }
+  }, [error, success]);
+
+  const login = async (userData: LoginInterface) => {
+    try {
+      const result = await callApi('login', {
+        body: userData,
+      });
+      return result;
+    } catch (error) {
+      let errorMessage = ApiError.ERROR_CHOICES.find(item => item.value === error.message).label;
+
+      if (!errorMessage) {
+        errorMessage = 'Erro desconhecido'
+      }
+      throw errorMessage;
+    }
   };
+
+  const getUserProfile = async () => {
+    try {
+      const result = await callApi('profile', {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(await AsyncStorage.getItem('userSessionKeys')).access}`,
+        },
+      });
+      return result;
+    } catch (error) {
+      let errorMessage = ApiError.ERROR_CHOICES.find(item => item.value === error.message).label;
+      if (!errorMessage) {
+        errorMessage = 'Erro desconhecido'
+      }
+    }
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    if(username && password){
+      const userData = {
+        username: username.replace(/\D/g, ''),
+        password: password,
+      };      
+      try {
+        const result = await login(userData);
+        if (result) {
+          AsyncStorage.setItem('userSessionKeys', JSON.stringify(result));
+          
+          const userProfile = await getUserProfile();
+          AsyncStorage.setItem('userProfile', JSON.stringify(userProfile));
+
+          const profilePicture = userProfile.profilePicture;
+          
+          if (profilePicture) {
+            AsyncStorage.setItem('userProfilePicture', API_BASE_URL + profilePicture);
+          } else {
+            AsyncStorage.setItem('userProfilePicture', '');
+          }
+
+          setSuccess(true);
+          router.push('/homepage');
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    } 
+    else{
+      setLoading(false);
+      setError('Preencha todos os campos');
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -46,17 +154,17 @@ export default function LoginScreen() {
 
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>CPF</Text>
             <View style={styles.inputWrapper}>
               <Ionicons name="mail-outline" size={20} color="#888" style={styles.inputIcon} />
-              <TextInput
-                placeholder="Seu email"
+              <TextInputMask
+                type="cpf"
+                placeholder="000.000.000-00"
                 style={styles.input}
                 placeholderTextColor="#aaa"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
+                value={username}
+                onChangeText={setUsername}
+                keyboardType="numeric"
               />
             </View>
           </View>
@@ -89,7 +197,8 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.8}
-          onPress={handleSubmit}
+          onPress={handleLogin}
+          disabled={loading}
         >
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>

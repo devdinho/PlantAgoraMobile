@@ -1,8 +1,8 @@
 import { endpoints } from './endpoints';
 import { ApiParams } from './types';
 
-const API_BASE_URL='https://plantagora.dinho.dev'
-// const API_BASE_URL='http://localhost:8001'
+// const API_BASE_URL='https://plantagora.dinho.dev'
+export const API_BASE_URL='http://192.168.15.18:8001'
 const API_CEP_URL='https://viacep.com.br/ws'
 
 export async function callApi(name: keyof typeof endpoints, params: ApiParams = {}) {
@@ -10,7 +10,6 @@ export async function callApi(name: keyof typeof endpoints, params: ApiParams = 
   if (!endpoint) throw new Error(`API ${name} não existe.`);
 
   let url = API_BASE_URL + endpoint.url;
-  console.log('URL:', url);
   
   if (name === 'get_address') {
     url = API_CEP_URL + endpoint.url;
@@ -43,10 +42,13 @@ export async function callApi(name: keyof typeof endpoints, params: ApiParams = 
   }
 
   const response = await fetch(url, fetchOptions);
+  
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Erro na requisição: ${error}`);
+    const error = await response.json();
+    throw new Error(error.detail);
   }
 
-  return await response.json();
+  const result = await response.json();
+
+  return result
 }

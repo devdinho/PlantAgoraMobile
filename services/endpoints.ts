@@ -12,6 +12,11 @@ export const endpoints = {
 
   register: {
     method: 'POST',
-    url: '/api/register/',
+    url: '/api/register',
+  },
+
+  profile: {
+    method: 'GET',
+    url: '/api/profile',
   },
 };
