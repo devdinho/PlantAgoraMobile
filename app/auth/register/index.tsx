@@ -77,13 +77,15 @@ export default function RegisterFinish() {
   const router = useRouter();
 
   const handleTabs = () => {
-    if(activeTab === 0) {
-      router.back();
+    if (activeTab === 0) {
+      router.push('/auth/login'); 
+    } else {
+      setActiveTab(prev => Math.max(prev - 1, 0)); 
     }
-    setActiveTab(activeTab - 1);
   };
   
-  const handleFinishRegistration = () => {
+  
+  const handleFinishRegistration = async () => {
     setLoading(true);
 
     let allInseted = true;
@@ -109,11 +111,14 @@ export default function RegisterFinish() {
         text1: 'Atenção',
         text2: 'Preencha todos os campos obrigatórios!',
       });
+      setLoading(false); // Reativa o botão caso os campos estejam incompletos
       return;
     }
 
     if (activeTab < tabs.length - 1) {
       setActiveTab(activeTab + 1);
+      setLoading(false); // Reativa o botão após avançar para a próxima etapa
+      return;
     }
 
     if (activeTab === 0) {
@@ -132,7 +137,7 @@ export default function RegisterFinish() {
             text2: 'Erro ao buscar o CEP',
           });
         }
-      });
+        });
     }
 
     if (activeTab === tabs.length - 1) {
@@ -151,24 +156,24 @@ export default function RegisterFinish() {
         zipcode: cep.replace(/\D/g, ''),
         city: `${city}/${state}`,
       }
-      
+
       registerUser(userData)
         .then((res) => {
-          if (res) {
-        Toast.show({
-          type: 'success',
-          text1: 'Atenção',
-          text2: 'Cadastro realizado com sucesso!',
-        });
-        router.push('/auth/login');
-          }
+        if (res) {
+          Toast.show({
+            type: 'success',
+            text1: 'Atenção',
+            text2: 'Cadastro realizado com sucesso!',
+          });
+          router.push('/auth/login');
+        }
         })
         .catch((err) => {
-          Toast.show({
-        type: 'error',
-        text1: 'Atenção',
-        text2: err || 'Erro ao realizar cadastro.',
-          });
+        Toast.show({
+          type: 'error',
+          text1: 'Atenção',
+          text2: err || 'Erro ao realizar cadastro.',
+        });
         });
     }
     setLoading(false);
@@ -313,7 +318,7 @@ export default function RegisterFinish() {
               options={{
                 maskType: 'BRL',
                 withDDD: true,
-                dddMask: '(63) ',
+                dddMask: '(**) ',
               }}
               placeholder="(63) 9 9999-9999"
               keyboardType="phone-pad"
@@ -486,10 +491,15 @@ export default function RegisterFinish() {
             style={styles.button}
             activeOpacity={0.8}
             onPress={handleFinishRegistration}
-            disabled={loading}
+            disabled={loading} // Desativa o botão enquanto o estado de loading for true
           >
-            <Text style={styles.buttonText}>{activeTab + 1  === tabs.length ? 'Finalizar':'Avançar'}</Text>
-            <Ionicons name={activeTab + 1  === tabs.length ?'checkmark-circle':'arrow-forward'} size={20} color="#fff" style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>{activeTab + 1 === tabs.length ? 'Finalizar' : 'Avançar'}</Text>
+            <Ionicons
+              name={activeTab + 1 === tabs.length ? 'checkmark-circle' : 'arrow-forward'}
+              size={20}
+              color="#fff"
+              style={styles.buttonIcon}
+            />
           </TouchableOpacity>
 
           <View style={styles.infoContainer}>

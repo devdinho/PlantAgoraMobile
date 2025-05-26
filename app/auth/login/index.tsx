@@ -64,12 +64,17 @@ export default function LoginScreen() {
       const result = await callApi('login', {
         body: userData,
       });
+
+      if (!result || !result.access) {
+        throw 'Usuário ou senha inválidos';
+      }
+
       return result;
     } catch (error) {
-      let errorMessage = ApiError.ERROR_CHOICES.find(item => item.value === error.message).label;
+      let errorMessage = ApiError.ERROR_CHOICES.find(item => item.value === error.message)?.label;
 
       if (!errorMessage) {
-        errorMessage = 'Erro desconhecido'
+        errorMessage = typeof error === 'string' ? error : 'User não encontrado';
       }
       throw errorMessage;
     }
@@ -96,21 +101,21 @@ export default function LoginScreen() {
     setError(null);
     setSuccess(false);
 
-    if(username && password){
+    if (username && password) {
       const userData = {
         username: username.replace(/\D/g, ''),
         password: password,
-      };      
+      };
       try {
         const result = await login(userData);
         if (result) {
           AsyncStorage.setItem('userSessionKeys', JSON.stringify(result));
-          
+
           const userProfile = await getUserProfile();
           AsyncStorage.setItem('userProfile', JSON.stringify(userProfile));
 
           const profilePicture = userProfile.profilePicture;
-          
+
           if (profilePicture) {
             AsyncStorage.setItem('userProfilePicture', API_BASE_URL + profilePicture);
           } else {
@@ -121,16 +126,15 @@ export default function LoginScreen() {
           router.push('/homepage');
         }
       } catch (error) {
-        setError(error);
+        setError(error); // Exibe a mensagem de erro
       } finally {
         setLoading(false);
       }
-    } 
-    else{
+    } else {
       setLoading(false);
       setError('Preencha todos os campos');
     }
-  }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -211,23 +215,7 @@ export default function LoginScreen() {
           <Text style={styles.buttonTextSecondary}>Crie seu cadastro de Hortelão</Text>
         </TouchableOpacity>
 
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>ou continue com</Text>
-          <View style={styles.divider} />
-        </View>
-
-        <View style={styles.socialButtonsContainer}>
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-            <Ionicons name="logo-google" size={22} color="#444" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-            <Ionicons name="logo-apple" size={22} color="#444" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-            <Ionicons name="logo-facebook" size={22} color="#444" />
-          </TouchableOpacity>
-        </View>
+      
       </ScrollView>
     </KeyboardAvoidingView>
   );
