@@ -21,14 +21,39 @@ import { LevelOfEducation, Gender } from '@/constants/contants';
 import { callApi } from '@/services/api';
 import ApiError from '../../../constants/errors'
 
-const buscarCep = async (cep:string) => {
+// Função para validar CPF
+const validarCPF = (cpf: string): boolean => {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+  let soma = 0;
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+  let resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf[9])) return false;
+
+  soma = 0;
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  return resto === parseInt(cpf[10]);
+};
+
+// Função para buscar CEP
+const buscarCep = async (cep: string) => {
   try {
     const result = await callApi('get_address', {
       urlParams: { cep: cep },
     });
+
+    if (!result || !result.logradouro || !result.bairro || !result.localidade || !result.uf) {
+      throw new Error('CEP não encontrado ou inválido.');
+    }
+
     return result;
   } catch (error) {
     console.error('Erro ao buscar o CEP:', error);
+    throw new Error('Erro ao buscar o CEP. Verifique o número informado.');
   }
 };
 
@@ -46,6 +71,7 @@ const registerUser = async (userData: any) => {
     throw errorMessage;
   }
 }
+
 export default function RegisterFinish() {
   const [loading, setLoading] = useState(false);
 
@@ -111,37 +137,71 @@ export default function RegisterFinish() {
         text1: 'Atenção',
         text2: 'Preencha todos os campos obrigatórios!',
       });
-      setLoading(false); // Reativa o botão caso os campos estejam incompletos
+      setLoading(false);
       return;
     }
 
-    if (activeTab < tabs.length - 1) {
-      setActiveTab(activeTab + 1);
-      setLoading(false); // Reativa o botão após avançar para a próxima etapa
+    // Validação de data de nascimento
+    const birthdateNumeros = birthdate.replace(/\D/g, '');
+    if (birthdateNumeros.length !== 8) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Data de nascimento inválida. Deve estar no formato DD/MM/AAAA.',
+      });
+      setLoading(false);
       return;
     }
 
     if (activeTab === 0) {
-      var result = buscarCep(cep.replace(/\D/g, ''));
+      if (!validarCPF(document)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'CPF inválido. Verifique e tente novamente.',
+        });
+        setLoading(false);
+        return;
+      }
 
-      result.then((res) => {
-        if (res) {
-          setAddress(res.logradouro);
-          setDistrict(res.bairro);
-          setCity(res.localidade);
-          setState(res.uf);
-        } else {
+      const telNumeros = tel.replace(/\D/g, '');
+      if (telNumeros.length < 10 || telNumeros.length > 11) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'Telefone inválido. Deve conter 10 ou 11 dígitos.',
+        });
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const result = await buscarCep(cep.replace(/\D/g, ''));
+        if (result) {
+          setAddress(result.logradouro || '');
+          setDistrict(result.bairro || '');
+          setCity(result.localidade || '');
+          setState(result.uf || '');
           Toast.show({
-            type: 'error',
-            text1: 'Atenção',
-            text2: 'Erro ao buscar o CEP',
+            type: 'success',
+            text1: 'Sucesso',
+            text2: 'Endereço preenchido automaticamente!',
           });
         }
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: error.message || 'Erro ao buscar o CEP.',
         });
+        setLoading(false);
+        return;
+      }
     }
 
+    // Finalizar cadastro
     if (activeTab === tabs.length - 1) {
-      var fulladdress = `${address}, ${number} ${complement ? `, ${complement}` : ''}`;
+      const fulladdress = `${address}, ${number} ${complement ? `, ${complement}` : ''}`;
 
       const userData = {
         username: document.replace(/\D/g, ''),
@@ -150,33 +210,38 @@ export default function RegisterFinish() {
         fulladdress: fulladdress,
         scholarity: scholarity,
         document: document.replace(/\D/g, ''),
-        gender:gender,
+        gender: gender,
         birthdate: birthdate,
         cell: tel.replace(/\D/g, ''),
         zipcode: cep.replace(/\D/g, ''),
         city: `${city}/${state}`,
-      }
+      };
 
-      registerUser(userData)
-        .then((res) => {
+      try {
+        const res = await registerUser(userData);
         if (res) {
           Toast.show({
             type: 'success',
             text1: 'Atenção',
             text2: 'Cadastro realizado com sucesso!',
           });
-          router.push('/auth/login');
+          router.push('/auth/login'); // Redireciona para a tela de login
         }
-        })
-        .catch((err) => {
+      } catch (err) {
+        const errorMessage = typeof err === 'string' ? err : err.message || 'Erro ao realizar cadastro.';
         Toast.show({
           type: 'error',
           text1: 'Atenção',
-          text2: err || 'Erro ao realizar cadastro.',
+          text2: errorMessage,
         });
-        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Avançar para a próxima etapa
+      setActiveTab(activeTab + 1);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const tabProgress = [
