@@ -34,8 +34,6 @@ export default function ConfiguracoesScreen(){
           setUserLastName(userInfos.last_name);
           setUserEmail(userInfos.email);
           setAcronym(userInfos.first_name.charAt(0).toUpperCase() + userInfos.last_name.charAt(0).toUpperCase());
-
-          console.log('User Profile:', userInfos);
         }
         if (userProfilePicture) {
           setUserPicture(userProfilePicture);

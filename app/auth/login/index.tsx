@@ -215,6 +215,24 @@ export default function LoginScreen() {
           <Text style={styles.buttonTextSecondary}>Crie seu cadastro de Hortelão</Text>
         </TouchableOpacity>
 
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>ou continue com</Text>
+          <View style={styles.divider} />
+        </View>
+
+        <View style={styles.socialButtonsContainer}>
+          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
+            <Ionicons name="logo-google" size={22} color="#444" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
+            <Ionicons name="logo-apple" size={22} color="#444" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
+            <Ionicons name="logo-facebook" size={22} color="#444" />
+          </TouchableOpacity>
+        </View>
+
       
       </ScrollView>
     </KeyboardAvoidingView>
