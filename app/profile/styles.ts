@@ -146,29 +146,7 @@ const styles = StyleSheet.create({
     top: 15,
     right: 15,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
-  navButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-  },
-  navText: {
-    fontSize: 12,
-    color: '#aaa',
-    marginTop: 4,
-  },
-  activeNavText: {
-    color: '#0c8b56',
-    fontWeight: '500',
-  },
-    logoutButton: {
+  logoutButton: {
     backgroundColor: '#F44336',
     flexDirection: 'row',
     alignItems: 'center',

@@ -32,7 +32,7 @@ export default function LoginScreen() {
         const userSessionKeys = await AsyncStorage.getItem('userSessionKeys');
 
         if (userSessionKeys) {
-          router.push('/homepage');
+          router.push('/profile');
         }
       } catch (error) {
         setError(error);
@@ -160,7 +160,7 @@ export default function LoginScreen() {
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>CPF</Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={20} color="#888" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color="#888" style={styles.inputIcon} />
               <TextInputMask
                 type="cpf"
                 placeholder="000.000.000-00"

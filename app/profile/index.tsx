@@ -18,21 +18,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Logo from '@/components/ui/Logo';
 import styles from './styles';
-import cards from '@/constants/HomepageCards';
+import cards from '@/constants/ProfileCards';
+import  { useBottomNav } from '../context/BottomNavContext';
 
-export default function HomePage() {
+export default function Profile() {
   const [selectedCard, setSelectedCard] = useState('dados');
   const [userFirstName, setUserFirstName] = useState(null);
   const [userPicture, setUserPicture] = useState(null);
   const [acronym, setAcronym] = useState(null);
+  const [registerApproved, setRegisterApproved] = useState(false);
 
+  const { setVisible, setSelectedIndex } = useBottomNav();
+  
   useEffect(() => {
+    setVisible(true);
+    setSelectedIndex(3)
     const fetchUserProfile = async () => {
       try {
         const userProfileInfo = await AsyncStorage.getItem('userProfile');
         if (userProfileInfo) {
           const userInfos = JSON.parse(userProfileInfo);
           setUserFirstName(userInfos.first_name);
+          setRegisterApproved(userInfos.grower.registerApproved);
           setAcronym(userInfos.first_name.charAt(0).toUpperCase() + userInfos.last_name.charAt(0).toUpperCase());
         }
         const userProfilePicture = await AsyncStorage.getItem('userProfilePicture');
@@ -45,7 +52,6 @@ export default function HomePage() {
     };
 
     fetchUserProfile();
-    
   }, []);
 
   const handleLogout = async () => {
@@ -109,80 +115,66 @@ export default function HomePage() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
-        {cards.map((card) => (
-          <TouchableOpacity
-            key={card.id}
-            style={[
-              styles.card,
-              selectedCard === card.id && styles.selectedCard
-            ]}
-            activeOpacity={0.8}
-            onPress={() => setSelectedCard(card.id)}
-          >
-            <View style={[
-              styles.iconContainer,
-              selectedCard === card.id && styles.selectedIconContainer
-            ]}>
-              <Ionicons 
-                name={card.icon} 
-                size={22} 
-                color={selectedCard === card.id ? '#fff' : '#0c8b56'} 
-              />
-            </View>
-            <View style={styles.cardTextContainer}>
-              <Text style={[
-                styles.cardTitle,
-                selectedCard === card.id && styles.selectedCardTitle
-              ]}>
-                {card.title}
-              </Text>
-              <Text style={styles.cardDescription}>
-                {card.description}
-              </Text>
-            </View>
-            <View style={styles.cardArrow}>
-              <Ionicons 
-                name="chevron-forward" 
-                size={20} 
-                color={selectedCard === card.id ? '#0c8b56' : '#ccc'} 
-              />
-            </View>
-            
-            {/* Indicator Dot */}
-            {selectedCard === card.id && (
-              <View style={styles.selectedIndicator} />
-            )}
+        {registerApproved ? (
+          <>
+            {cards.map((card) => (
+              <TouchableOpacity
+                key={card.id}
+                style={[
+                  styles.card,
+                  selectedCard === card.id && styles.selectedCard
+                ]}
+                activeOpacity={0.8}
+                onPress={() => setSelectedCard(card.id)}
+              >
+                <View style={[
+                  styles.iconContainer,
+                  selectedCard === card.id && styles.selectedIconContainer
+                ]}>
+                  <Ionicons 
+                    name={card.icon} 
+                    size={22} 
+                    color={selectedCard === card.id ? '#fff' : '#0c8b56'} 
+                  />
+                </View>
+                <View style={styles.cardTextContainer}>
+                  <Text style={[
+                    styles.cardTitle,
+                    selectedCard === card.id && styles.selectedCardTitle
+                  ]}>
+                    {card.title}
+                  </Text>
+                  <Text style={styles.cardDescription}>
+                    {card.description}
+                  </Text>
+                </View>
+                <View style={styles.cardArrow}>
+                  <Ionicons 
+                    name="chevron-forward" 
+                    size={20} 
+                    color={selectedCard === card.id ? '#0c8b56' : '#ccc'} 
+                  />
+                </View>
+                
+                {/* Indicator Dot */}
+                {selectedCard === card.id && (
+                  <View style={styles.selectedIndicator} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </>
+        ): (
+          <View style={styles.cardTextContainer}>
+            <Text style={styles.cardTitle}>
+              Seu cadastro ainda não foi aprovado. Por favor, aguarde a aprovação.
+            </Text>
+          </View>
+        )}
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Icon name="logout" size={20} color="#fff" style={styles.logoutIcon} />
+            <Text style={styles.logoutText}>Sair da Conta</Text>
           </TouchableOpacity>
-        ))}
-
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Icon name="logout" size={20} color="#fff" style={styles.logoutIcon} />
-          <Text style={styles.logoutText}>Sair da Conta</Text>
-        </TouchableOpacity>
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      {/* <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navButton}>
-          <Ionicons name="home" size={24} color="#0c8b56" />
-          <Text style={[styles.navText, styles.activeNavText]}>Início</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navButton}>
-          <Ionicons name="calendar-outline" size={24} color="#aaa" />
-          <Text style={styles.navText}>Agenda</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navButton}>
-          <Ionicons name="notifications-outline" size={24} color="#aaa" />
-          <Text style={styles.navText}>Notificações</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navButton}>
-          <Ionicons name="person-outline" size={24} color="#aaa" />
-          <Text style={styles.navText}>Perfil</Text>
-        </TouchableOpacity>
-      </View> */}
     </SafeAreaView>
   );
 }
