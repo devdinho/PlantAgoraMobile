@@ -129,7 +129,7 @@ export default function LoginScreen() {
           setSuccess(true);
 
           if (userProfile.grower.registerApproved) {
-            router.push('/homepage');
+            router.push('/home');
             setVisible(true)
           } else {
             setVisible(false);

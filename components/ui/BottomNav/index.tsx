@@ -12,7 +12,7 @@ export default function BottomNav() {
   const navItems = [
     { icon: 'home', label: 'Início', route: '/home', enabled: true },
     { icon: 'calendar-outline', label: 'Agenda', route: '/agenda', enabled: false },
-    { icon: 'notifications-outline', label: 'Notificações', route: '/notifications', enabled: false },
+    { icon: 'notifications-outline', label: 'Notificações', route: '/notifications', enabled: true },
     { icon: 'person-outline', label: 'Perfil', route: '/profile', enabled: true },
   ];
 
@@ -27,7 +27,7 @@ export default function BottomNav() {
               if (selectedIndex === index) return; // Prevent re-navigation to the same route
             }
             setSelectedIndex(index);
-            router.push(item.route);
+            router.push(item.route as any);
           }
         }>
           <Ionicons
