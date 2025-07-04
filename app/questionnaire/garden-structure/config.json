@@ -1,0 +1,69 @@
+{
+  "id": "garden-structure",
+  "title": "Estrutura da Horta",
+  "icon": "leaf",
+  "storageKey": "garden-structure",
+  "fields": [
+    {
+      "id": "bedsAndArea",
+      "type": "custom",
+      "question": "Qual é a quantidade de canteiros/área m²?",
+      "required": true,
+      "customComponent": "BedsAndAreaSelector"
+    },
+    {
+        "id": "irrigationSystem",
+        "type": "checkbox",
+        "question": "De que forma é feita a irrigação?",
+        "required": false,
+        "options": [
+          { "value": "regador", "label": "Regador" },
+          { "value": "mangueira", "label": "Mangueira" }
+        ]
+    },
+    {
+      "id": "plantedBeds",
+      "type": "boolean",
+      "question": "Todos os canteiros estão plantados?",
+      "required": true
+    },
+    {
+      "id": "protectedAreas",
+      "type": "checkbox",
+      "question": "A área de cultivo é protegida?",
+      "required": false,
+      "options": [
+        { "value": "filme-agricola", "label": "Com filme agricola" },
+        { "value": "sombrite", "label": "Com sombrite" },
+        { "value": "nenhuma", "label": "Não é protegida" }
+      ]
+    },
+    {
+      "id": "mainCrops",
+      "type": "checkbox",
+      "question": "Principais culturas plantadas:",
+      "required": true,
+      "options": [
+        { "value": "alface", "label": "Alface" },
+        { "value": "couve", "label": "Couve" },
+        { "value": "rucula", "label": "Rúcula" },
+        { "value": "maxixe", "label": "Maxixe" },
+        { "value": "quiabo", "label": "Quiabo" },
+        { "value": "cheiro-verde", "label": "Cheiro Verde" },
+        { "value": "salsa", "label": "Salsa" },
+        { "value": "Agrião", "label": "Agrião" },
+        { "value": "outras", "label": "Outras variedades" }
+      ],
+      "conditionalField": {
+        "showWhen": "mainCrops",
+        "equals": "outras",
+        "field": {
+          "id": "otherVarieties",
+          "type": "textarea",
+          "question": "Quais outras variedadades são cultivadas nesses espaços?",
+          "placeholder": "Liste outras plantas cultivadas..."
+        }
+      }
+    }
+  ]
+} 

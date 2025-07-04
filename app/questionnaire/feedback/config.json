@@ -1,0 +1,29 @@
+{
+  "id": "feedback",
+  "title": "Questões Abertas/Sugestões",
+  "icon": "chatbubble-ellipses",
+  "storageKey": "feedback",
+  "fields": [
+    {
+      "id": "generalFeedback",
+      "type": "textarea",
+      "question": "Compartilhe suas experiências, sugestões ou dúvidas sobre o cultivo:",
+      "required": false,
+      "placeholder": "Escreva aqui suas observações gerais..."
+    },
+    {
+      "id": "improvementSuggestions",
+      "type": "textarea",
+      "question": "Que melhorias você sugere para o projeto da horta comunitária?",
+      "required": false,
+      "placeholder": "Descreva suas ideias para melhorar o projeto..."
+    },
+    {
+      "id": "additionalComments",
+      "type": "textarea",
+      "question": "Há algo mais que gostaria de compartilhar conosco?",
+      "required": false,
+      "placeholder": "Comentários adicionais..."
+    }
+  ]
+} 

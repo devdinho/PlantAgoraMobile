@@ -1,0 +1,89 @@
+{
+  "id": "production",
+  "title": "Produção e Comercialização",
+  "icon": "bar-chart",
+  "storageKey": "production",
+  "fields": [
+    {
+      "id": "monthlyIncome",
+      "type": "custom",
+      "question": "Qual é a renda mensal estimada da família?",
+      "required": true,
+      "customComponent": "IncomeSelector"
+    },
+    {
+      "id": "productDestination",
+      "type": "checkbox",
+      "question": "Qual é o destino dos seus produtos?",
+      "required": true,
+      "options": [
+        { "value": "consumo-proprio", "label": "Consumo próprio" },
+        { "value": "comercializacao", "label": "Comercialização" },
+        { "value": "doacao", "label": "Doação" },
+        { "value": "outros", "label": "Outros" }
+      ],
+      "conditionalField": {
+        "showWhen": "productDestination",
+        "equals": "outros",
+        "field": {
+          "id": "otherProductDestination",
+          "type": "textarea",
+          "question": "Especifique outros destinos",
+          "placeholder": "Descreva outros destinos dos produtos..."
+        }
+      }
+    },
+    {
+      "id": "commercializationDifficulties",
+      "type": "checkbox",
+      "question": "Quais são as principais dificuldades enfrentadas na comercialização?",
+      "required": false,
+      "options": [
+        { "value": "falta-compradores", "label": "Falta de compradores" },
+        { "value": "precos-baixos", "label": "Preços baixos" },
+        { "value": "transporte", "label": "Transporte" },
+        { "value": "qualidade-produtos", "label": "Qualidade dos produtos" },
+        { "value": "outros", "label": "Outros" }
+      ],
+      "conditionalField": {
+        "showWhen": "commercializationDifficulties",
+        "equals": "outros",
+        "field": {
+          "id": "otherCommercializationDifficulties",
+          "type": "textarea",
+          "question": "Especifique outras dificuldades",
+          "placeholder": "Descreva outras dificuldades..."
+        }
+      }
+    },
+    {
+      "id": "salesChannels",
+      "type": "checkbox",
+      "question": "Quais canais de venda você utiliza?",
+      "required": false,
+      "options": [
+        { "value": "feira-livre", "label": "Feira livre" },
+        { "value": "mercados-locais", "label": "Mercados locais" },
+        { "value": "venda-direta", "label": "Venda direta ao consumidor" },
+        { "value": "programas-governo", "label": "Programas do governo" },
+        { "value": "outros", "label": "Outros" }
+      ],
+      "conditionalField": {
+        "showWhen": "salesChannels",
+        "equals": "outros",
+        "field": {
+          "id": "otherSalesChannels",
+          "type": "textarea",
+          "question": "Especifique outros canais",
+          "placeholder": "Descreva outros canais de venda..."
+        }
+      }
+    },
+    {
+      "id": "calculatesCosts",
+      "type": "boolean",
+      "question": "Você calcula os custos de produção?",
+      "required": true
+    }
+  ]
+} 

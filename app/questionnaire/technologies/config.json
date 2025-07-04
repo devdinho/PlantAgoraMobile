@@ -1,0 +1,41 @@
+{
+  "id": "technologies",
+  "title": "Tecnologias",
+  "icon": "laptop",
+  "storageKey": "technologies",
+  "fields": [
+    {
+      "id": "usesCertifiedSeeds",
+      "type": "boolean",
+      "question": "Utiliza sementes fiscalizadas e certificadas?",
+      "required": true
+    },
+    {
+      "id": "seedlingProduction",
+      "type": "checkbox",
+      "question": "Produção das mudas: própria/terceirizada (multichoice)",
+      "required": true,
+      "options": [
+        { "value": "propria", "label": "Própria" },
+        { "value": "terceirizada", "label": "Terceirizada" }
+      ]
+    },
+    {
+      "id": "usesFertilization",
+      "type": "boolean",
+      "question": "Faz adubação?",
+      "required": true
+    },
+    {
+      "id": "fertilizationProducts",
+      "type": "radio",
+      "question": "Quais produtos usa para adubagem?",
+      "required": true,
+      "options": [
+        { "value": "composto-quimico", "label": "Composto Químico" },
+        { "value": "composto-organico", "label": "Composto orgânico (cama de frango, esterco, palha de arroz)" },
+        { "value": "nenhuma", "label": "Nenhuma das alternativas" }
+      ]
+    }
+  ]
+} 

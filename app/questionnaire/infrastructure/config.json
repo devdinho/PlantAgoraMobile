@@ -1,0 +1,166 @@
+{
+    "id": "infrastructure",
+    "title": "Infraestrutura e Apoio",
+    "icon": "construct",
+    "storageKey": "infrastructure",
+    "fields": [
+      {
+        "id": "seasi_support",
+        "question": "Recebe acompanhamento técnico da SEASI?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Sim", "value": "sim" },
+          { "label": "Não", "value": "nao" }
+        ]
+      },
+      {
+        "id": "infrastructure_evaluation",
+        "question": "Avaliação da infraestrutura da horta comunitária",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Excelente", "value": "excelente" },
+          { "label": "Boa", "value": "boa" },
+          { "label": "Regular", "value": "regular" },
+          { "label": "Ruim", "value": "ruim" },
+          { "label": "Muito ruim", "value": "muito_ruim" }
+        ]
+      },
+      {
+        "id": "infrastructure_meets_needs",
+        "question": "A infraestrutura atende às necessidades?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Sim", "value": "sim" },
+          { "label": "Não", "value": "nao" }
+        ],
+        "conditionalField": {
+          "showWhen": "infrastructure_meets_needs",
+          "equals": "nao",
+          "field": {
+            "id": "what_is_missing",
+            "question": "Se 'não', especifique o que falta",
+            "type": "textarea",
+            "required": false,
+            "placeholder": "Descreva o que está faltando na infraestrutura..."
+          }
+        }
+      },      
+      {
+        "id": "difficult_inputs",
+        "question": "Quais insumos você tem mais dificuldade de acessar?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Sementes", "value": "sementes" },
+          { "label": "Adubos", "value": "adubos" },
+          { "label": "Ferramentas", "value": "ferramentas" },
+          { "label": "Outros", "value": "outros" }
+        ],
+        "conditionalField": {
+          "showWhen": "difficult_inputs",
+          "equals": "outros",
+          "field": {
+            "id": "other_difficult_inputs",
+            "type": "textarea",
+            "question": "Quais são os outros insumos de difícil acesso?",
+            "required": false,
+            "placeholder": "Especifique os outros insumos aqui..."
+          }
+        }
+      },
+      {
+        "id": "received_support",
+        "question": "Quais desses apoios da Prefeitura ou de outras instituições você já recebeu?",
+        "type": "checkbox",
+        "required": false,
+        "options": [
+          { "label": "Capacitação", "value": "capacitacao" },
+          { "label": "Assistência técnica", "value": "assistencia_tecnica" },
+          { "label": "Insumos (sementes, adubo, ferramentas)", "value": "insumos" },
+          { "label": "Recursos financeiros ou microcrédito", "value": "recursos_financeiros" },
+          { "label": "Acesso a mercados", "value": "acesso_mercados" },
+          { "label": "Nenhum dessas alternativas", "value": "nenhum" }
+        ]
+      },
+      {
+        "id": "training_participation",
+        "question": "Já participou de capacitação da prefeitura ou outras instituições?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Sim, apenas uma vez", "value": "sim_uma_vez" },
+          { "label": "Sim, mais de uma vez", "value": "sim_mais_vezes" },
+          { "label": "Não", "value": "nao" }
+        ]
+      },
+      {
+        "id": "training_contribution",
+        "question": "As temáticas trabalhadas nas capacitações contribuíram com a melhoria das atividades diárias desenvolvidas nas hortas?",
+        "type": "radio",
+        "required": false,
+        "options": [
+          { "label": "Sim, contribuíram muito", "value": "muito" },
+          { "label": "Sim, contribuíram parcialmente", "value": "parcialmente" },
+          { "label": "Não contribuíram", "value": "nao_contribuiram" }
+        ]
+      },
+      {
+        "id": "technical_assistance_frequency",
+        "question": "Você já recebeu assistência técnica por parte da prefeitura ou de outra instituição?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Sim, semanalmente", "value": "semanalmente" },
+          { "label": "Sim, quinzenalmente", "value": "quinzenalmente" },
+          { "label": "Sim, mensalmente", "value": "mensalmente" },
+          { "label": "Sim, semestralmente", "value": "semestralmente" },
+          { "label": "Sim, anualmente", "value": "anualmente" },
+          { "label": "Não recebi assistência técnica", "value": "nao_recebi" }
+        ]
+      },
+      {
+        "id": "technical_assistance_contribution",
+        "question": "A assistência técnica recebida contribuiu com a melhoria das atividades desenvolvidas nas hortas?",
+        "type": "radio",
+        "required": false,
+        "options": [
+          { "label": "Sim, contribuiu muito", "value": "muito" },
+          { "label": "Sim, contribuiu parcialmente", "value": "parcialmente" },
+          { "label": "Não contribuiu", "value": "nao_contribuiu" }
+        ]
+      },
+      {
+        "id": "infrastructure_detailed_evaluation",
+        "question": "Como você avalia a infraestrutura (portão, alambrado, calçada, depósito, estufa, etc.) disponível na horta comunitária para o desenvolvimento das atividades?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          { "label": "Muito boa, atende totalmente às necessidades", "value": "muito_boa" },
+          { "label": "Boa, atende parcialmente às necessidades", "value": "boa" },
+          { "label": "Regular, há algumas dificuldades", "value": "regular" },
+          { "label": "Ruim, há muitas dificuldades", "value": "ruim" },
+          { "label": "Muito ruim, não atende às necessidades", "value": "muito_ruim" }
+        ]
+      },
+      {
+        "id": "app_features",
+        "question": "Caso fosse desenvolvido um aplicativo para celular voltado exclusivamente para horticultores, quais funcionalidades você consideraria mais úteis para facilitar sua rotina e otimizar sua produção?",
+        "type": "checkbox",
+        "required": false,
+        "options": [
+          { "label": "Organização do planejamento e gestão da produção", "value": "planejamento_gestao" },
+          { "label": "Atualização e armazenamento de dados sobre a horta", "value": "dados_horta" },
+          { "label": "Comunicação direta com técnicos e especialistas para tirar dúvidas", "value": "comunicacao_tecnicos" },
+          { "label": "Acesso a cursos, treinamentos e conteúdos educativos sobre horticultura", "value": "cursos_treinamentos" },
+          { "label": "Registro e controle de insumos, estoque e colheita", "value": "controle_insumos" },
+          { "label": "Informações sobre pragas, doenças e métodos de controle", "value": "pragas_doencas" },
+          { "label": "Previsão do clima e alertas meteorológicos para planejamento agrícola", "value": "previsao_clima" },
+          { "label": "Conexão com mercados e compradores para facilitar a comercialização", "value": "conexao_mercados" }
+        ]
+      }
+    ]
+  }
+  

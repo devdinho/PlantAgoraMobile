@@ -26,7 +26,7 @@ const cards = [
       icon: 'laptop-outline',
       description: '',
       route: '../questionnaire/technologies'
-    }
+    },
     /*{ 
       id: 'tecnologias', 
       title: 'Questionário Socioeconômico', 
@@ -43,9 +43,9 @@ const cards = [
     },
     { 
       id: 'sugestoes', 
-      title: 'Contatar Suporte', 
+      title: 'Questões e Sugestões', 
       icon: 'chatbubble-ellipses-outline',
-      description: 'Envie perguntas ou sugestões para nossa equipe',
+      description: 'Envie sugestões para nossa equipe',
       route: '../questionnaire/feedback'
     }
 ];
