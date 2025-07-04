@@ -8,8 +8,8 @@ export { default as AddSaleModal } from './AddSaleModal';
 export { default as HomeHeader } from './HomeHeader';
 
 // Config Components
-/*export { default as ConfigHeader } from './ConfigHeader';
-export { default as ConfigProfileCard } from './ConfigProfileCard';
+export { default as ConfigHeader } from './ConfigHeader';
+/*export { default as ConfigProfileCard } from './ConfigProfileCard';
 export { default as ConfigMenuItem } from './ConfigMenuItem';
 export { default as ConfigMenuSection } from './ConfigMenuSection';*/
 
