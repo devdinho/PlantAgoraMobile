@@ -76,7 +76,7 @@ export const SUPPORT_MENU: ConfigMenuItem[] = [
     id: 'about',
     icon: 'information-circle-outline',
     title: 'Sobre o Aplicativo',
-    subtitle: 'Versão 1.0.0',
+    subtitle: 'Versão 0.1.0',
     iconColor: '#46A56C',
     action: 'about'
   },
