@@ -16,30 +16,27 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Logo from '@/components/ui/Logo';
 import styles from './styles';
 import cards from '@/constants/ProfileCards';
-import  { useBottomNav } from '../context/BottomNavContext';
+
+import { useBottomNav } from '@/app/context/BottomNavContext';
 
 export default function Profile() {
-  const [selectedCard, setSelectedCard] = useState('dados');
-  const [userFirstName, setUserFirstName] = useState(null);
-  const [userPicture, setUserPicture] = useState(null);
-  const [acronym, setAcronym] = useState(null);
-  const [registerApproved, setRegisterApproved] = useState(false);
-
+  const [userFirstName, setUserFirstName] = useState<string>('');
+  const [userPicture, setUserPicture] = useState<string>('');
+  const [acronym, setAcronym] = useState<string>('');
+  const [registerApproved, setRegisterApproved] = useState(true);
+  
   const { setVisible, setSelectedIndex } = useBottomNav();
   
   useEffect(() => {
-    setVisible(true);
-    setSelectedIndex(3)
     const fetchUserProfile = async () => {
       try {
         const userProfileInfo = await AsyncStorage.getItem('userProfile');
         if (userProfileInfo) {
           const userInfos = JSON.parse(userProfileInfo);
           setUserFirstName(userInfos.first_name);
-          setRegisterApproved(userInfos.grower.registerApproved);
+          setRegisterApproved(userInfos.grower?.registerApproved ?? true);
           setAcronym(userInfos.first_name.charAt(0).toUpperCase() + userInfos.last_name.charAt(0).toUpperCase());
         }
         const userProfilePicture = await AsyncStorage.getItem('userProfilePicture');
@@ -59,6 +56,9 @@ export default function Profile() {
       await AsyncStorage.removeItem('userProfile');
       await AsyncStorage.removeItem('userSessionKeys');
       
+      setVisible(false)
+      setSelectedIndex(0)
+
       router.push('/auth/login');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
@@ -70,10 +70,8 @@ export default function Profile() {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       
       {/* Header */}
+      {registerApproved ?
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Logo style={styles.logo} />
-        </View>
         <TouchableOpacity
         style={styles.settingsButton}
         onPress={() => router.push('/config')}
@@ -81,6 +79,7 @@ export default function Profile() {
           <Ionicons name="settings-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>
+      :''}
 
       {/* Welcome Section */}
       <LinearGradient
@@ -90,10 +89,11 @@ export default function Profile() {
         <View style={styles.welcomeContent}>
           <View style={styles.welcomeTextContainer}>
             <Text style={styles.welcomeTitle}>Olá, {userFirstName}!</Text>
+            {registerApproved ?
             <Text style={styles.welcomeSubtitle}>
               Por favor, selecione um card abaixo para preencher
               ou atualizar suas informações
-            </Text>
+            </Text>:''}
           </View>
           <View style={styles.profileImageContainer}>
             {userPicture ? (
@@ -122,25 +122,21 @@ export default function Profile() {
                 key={card.id}
                 style={[
                   styles.card,
-                  selectedCard === card.id && styles.selectedCard
                 ]}
                 activeOpacity={0.8}
-                onPress={() => setSelectedCard(card.id)}
               >
                 <View style={[
                   styles.iconContainer,
-                  selectedCard === card.id && styles.selectedIconContainer
                 ]}>
                   <Ionicons 
                     name={card.icon} 
                     size={22} 
-                    color={selectedCard === card.id ? '#fff' : '#0c8b56'} 
+                    color={'#0c8b56'} 
                   />
                 </View>
                 <View style={styles.cardTextContainer}>
                   <Text style={[
                     styles.cardTitle,
-                    selectedCard === card.id && styles.selectedCardTitle
                   ]}>
                     {card.title}
                   </Text>
@@ -152,14 +148,9 @@ export default function Profile() {
                   <Ionicons 
                     name="chevron-forward" 
                     size={20} 
-                    color={selectedCard === card.id ? '#0c8b56' : '#ccc'} 
+                    color={'#ccc'} 
                   />
                 </View>
-                
-                {/* Indicator Dot */}
-                {selectedCard === card.id && (
-                  <View style={styles.selectedIndicator} />
-                )}
               </TouchableOpacity>
             ))}
           </>

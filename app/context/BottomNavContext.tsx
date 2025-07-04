@@ -9,14 +9,14 @@ type BottomNavContextType = {
 };
 
 const BottomNavContext = createContext<BottomNavContextType>({
-  visible: true,
+  visible: false,
   setVisible: () => {},
   selectedIndex: 0,
   setSelectedIndex: () => {},
 });
 
 export const BottomNavProvider = ({ children }: { children: React.ReactNode }) => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   return (

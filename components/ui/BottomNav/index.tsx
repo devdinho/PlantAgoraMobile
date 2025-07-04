@@ -10,10 +10,10 @@ export default function BottomNav() {
   if (!visible) return null;
 
   const navItems = [
-    { icon: 'home', label: 'Início', route: '/home' },
-    { icon: 'calendar-outline', label: 'Agenda', route: '/agenda' },
-    { icon: 'notifications-outline', label: 'Notificações', route: '/notifications' },
-    { icon: 'person-outline', label: 'Perfil', route: '/profile' },
+    { icon: 'home', label: 'Início', route: '/home', enabled: true },
+    { icon: 'calendar-outline', label: 'Agenda', route: '/agenda', enabled: false },
+    { icon: 'notifications-outline', label: 'Notificações', route: '/notifications', enabled: false },
+    { icon: 'person-outline', label: 'Perfil', route: '/profile', enabled: true },
   ];
 
   return (
@@ -23,8 +23,11 @@ export default function BottomNav() {
           key={index}
           style={styles.navButton}
           onPress={() => {
-              setSelectedIndex(index);
-              router.push(item.route);
+            if (item.enabled) {
+              if (selectedIndex === index) return; // Prevent re-navigation to the same route
+            }
+            setSelectedIndex(index);
+            router.push(item.route);
           }
         }>
           <Ionicons

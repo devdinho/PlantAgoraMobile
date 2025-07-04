@@ -19,6 +19,7 @@ function LayoutContent() {
   useEffect(() => {
     setVisible(false);
     return () => setVisible(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

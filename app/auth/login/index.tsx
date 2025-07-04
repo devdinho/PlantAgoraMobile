@@ -3,6 +3,7 @@ import {View,Text,TextInput,TouchableOpacity, Pressable,KeyboardAvoidingView,Pla
 import { TextInputMask } from 'react-native-masked-text';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import {ActivityIndicator} from 'react-native';
 
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +15,8 @@ import LoginInterface from '../../../interfaces/login';
 import Logo from '@/components/ui/Logo';
 import styles from './styles';
 
+import { useBottomNav } from '../../../app/context/BottomNavContext';
+
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
@@ -23,6 +26,8 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const { setVisible } = useBottomNav();
 
   const router = useRouter();
   
@@ -113,9 +118,8 @@ export default function LoginScreen() {
 
           const userProfile = await getUserProfile();
           AsyncStorage.setItem('userProfile', JSON.stringify(userProfile));
-
+          
           const profilePicture = userProfile.profilePicture;
-
           if (profilePicture) {
             AsyncStorage.setItem('userProfilePicture', API_BASE_URL + profilePicture);
           } else {
@@ -123,7 +127,15 @@ export default function LoginScreen() {
           }
 
           setSuccess(true);
-          router.push('/homepage');
+
+          if (userProfile.grower.registerApproved) {
+            router.push('/homepage');
+            setVisible(true)
+          } else {
+            setVisible(false);
+            router.push('/profile');
+          }
+
         }
       } catch (error) {
         setError(error); // Exibe a mensagem de erro
@@ -204,7 +216,8 @@ export default function LoginScreen() {
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>Entrar</Text>
+          {loading && <ActivityIndicator size="small" color="#c2c2c2"/> }
+          {!loading && <Text style={styles.buttonText}>Entrar</Text>}
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -72,7 +72,7 @@ export default function ConfiguracoesScreen(){
       
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}
-         onPress={() => router.push('/homepage')}>
+         onPress={() => router.push('/profile')}>
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity >
         <Text style={styles.headerTitle}>Configurações</Text>

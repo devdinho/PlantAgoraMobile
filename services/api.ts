@@ -1,8 +1,8 @@
 import { endpoints } from './endpoints';
 import { ApiParams } from './types';
 
-export const API_BASE_URL='https://plantagora.dinho.dev'
-//export const API_BASE_URL='http://192.168.15.18:8001'
+// export const API_BASE_URL='https://plantagora.dinho.dev'
+export const API_BASE_URL='http://192.168.15.18:8001'
 const API_CEP_URL='https://viacep.com.br/ws'
 
 export async function callApi(name: keyof typeof endpoints, params: ApiParams = {}) {

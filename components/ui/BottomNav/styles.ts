@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     },
     navText: {
         fontSize: 12,
-        color: '#aaa',
+        color: '#666666',
         marginTop: 4,
     },
     activeNavText: {
