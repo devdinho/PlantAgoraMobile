@@ -74,7 +74,8 @@ export default function Profile() {
       <View style={styles.header}>
         <TouchableOpacity
         style={styles.settingsButton}
-        onPress={() => router.push('/config')}
+        onPress={() => (setVisible(false), router.push('/config'))}
+        
         >
           <Ionicons name="settings-outline" size={24} color="#333" />
         </TouchableOpacity>
@@ -124,6 +125,12 @@ export default function Profile() {
                   styles.card,
                 ]}
                 activeOpacity={0.8}
+                onPress={() => {
+                  if (card.route) {
+                    setVisible(false);
+                    router.push(card.route);
+                  }
+                }}
               >
                 <View style={[
                   styles.iconContainer,

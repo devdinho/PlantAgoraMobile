@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Platform,
     SafeAreaView,
     ScrollView,
     StatusBar,
@@ -11,6 +10,8 @@ import {
     View,
     Image
 } from 'react-native';
+
+import { useBottomNav } from '../context/BottomNavContext';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,6 +23,8 @@ export default function ConfiguracoesScreen(){
   const [userPicture, setUserPicture] = useState(null);
   const [acronym, setAcronym] = useState(null);
 
+  const { setVisible } = useBottomNav();
+  
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -72,7 +75,7 @@ export default function ConfiguracoesScreen(){
       
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}
-         onPress={() => router.push('/profile')}>
+         onPress={() => (setVisible(true), router.push('/profile'))}>
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity >
         <Text style={styles.headerTitle}>Configurações</Text>
@@ -140,7 +143,10 @@ export default function ConfiguracoesScreen(){
           
           {renderMenuItem(
             'info',
-            'Sobre o aplicativo'
+            'Sobre o aplicativo',
+            null,
+            true,
+            () => (setVisible(false), router.push('/config/about'))
           )}
         </View>
 
@@ -159,11 +165,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 4,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
-    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
   },
   headerTitle: {
     fontSize: 18,
