@@ -13,15 +13,15 @@ import {
 
 import { useBottomNav } from '../context/BottomNavContext';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ConfiguracoesScreen(){
-  const [userFirstName, setUserFirstName] = useState(null);
-  const [userLastName, setUserLastName] = useState(null);
-  const [userEmail, setUserEmail] = useState(null);
-  const [userPicture, setUserPicture] = useState(null);
-  const [acronym, setAcronym] = useState(null);
+  const [userFirstName, setUserFirstName] = useState<string | null>(null);
+  const [userLastName, setUserLastName] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [acronym, setAcronym] = useState<string | null>(null);
 
   const { setVisible } = useBottomNav();
   
@@ -50,12 +50,18 @@ export default function ConfiguracoesScreen(){
     
   }, []);
 
-  const renderMenuItem = (iconName, title, subtitle = null, hasChevron = true, onPress = () => {}) => {
+  const renderMenuItem = (
+    iconName: keyof typeof Ionicons.glyphMap, 
+    title: string, 
+    subtitle: string | null = null, 
+    hasChevron: boolean = true, 
+    onPress: () => void = () => {}
+  ) => {
     return (
       <TouchableOpacity style={styles.menuItem} onPress={onPress}>
         <View style={styles.menuItemLeft}>
           <View style={styles.menuIcon}>
-            <Icon name={iconName} size={22} color="#666" />
+            <Ionicons name={iconName} size={22} color="#666" />
           </View>
           <View>
             <Text style={styles.menuItemTitle}>{title}</Text>
@@ -63,7 +69,7 @@ export default function ConfiguracoesScreen(){
           </View>
         </View>
         {hasChevron && (
-          <Icon name="chevron-right" size={20} color="#999" />
+          <Ionicons name="chevron-forward" size={20} color="#999" />
         )}
       </TouchableOpacity>
     );
@@ -76,7 +82,7 @@ export default function ConfiguracoesScreen(){
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}
          onPress={() => (setVisible(true), router.push('/profile'))}>
-          <Icon name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity >
         <Text style={styles.headerTitle}>Configurações</Text>
         <View style={{ width: 24 }} />
@@ -116,16 +122,19 @@ export default function ConfiguracoesScreen(){
           
           {renderMenuItem(
             'notifications',
-            'Notificações'
+            'Notificações',
+            null,
+            true,
+            () => (setVisible(false), router.push('/notifications/config'))
           )}
           
           {renderMenuItem(
-            'lock',
+            'lock-closed',
             'Privacidade e Segurança'
           )}
           
           {renderMenuItem(
-            'delete',
+            'trash',
             'Limpar dados do formulário',
             null,
             false,
@@ -137,12 +146,12 @@ export default function ConfiguracoesScreen(){
           <Text style={styles.sectionLabel}>SUPORTE</Text>
           
           {renderMenuItem(
-            'help',
+            'help-circle',
             'Ajuda e Suporte'
           )}
           
           {renderMenuItem(
-            'info',
+            'information-circle',
             'Sobre o aplicativo',
             null,
             true,
@@ -154,7 +163,7 @@ export default function ConfiguracoesScreen(){
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   safeArea: {
